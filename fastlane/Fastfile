@@ -20,10 +20,66 @@ def fetch_changelog(commit_count = 5)
   notes
 end
 
+# Helper: Smart build number resolver & incrementer
+def resolve_and_increment_build_number(options)
+  bundle_id           = options[:bundle_id]
+  project_path        = options[:project]
+  sync_testflight     = options.fetch(:sync_with_testflight, true)
+  current_build       = nil
+
+  # 1. Attempt to fetch latest build number from Apple TestFlight
+  if sync_testflight && bundle_id && (options[:api_key_path] || ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"])
+    begin
+      UI.message("[build_number] Querying TestFlight for latest build number (#{bundle_id})...")
+      current_build = latest_testflight_build_number(
+        app_identifier: bundle_id,
+        initial_build_number: 0
+      )
+      UI.success("[build_number] TestFlight latest build: #{current_build}")
+    rescue StandardError => e
+      UI.important("[build_number] TestFlight query skipped or failed (#{e.message}). Falling back to Git/local version...")
+    end
+  end
+
+  # 2. Fallback: Determine base build number from Git commits or local project
+  if current_build.nil?
+    commit_count = number_of_commits rescue nil
+    commit_count ||= Actions.sh("git rev-list --count HEAD").strip.to_i rescue 1
+    current_build = commit_count
+    UI.message("[build_number] Base build number resolved from Git: #{current_build}")
+  end
+
+  # 3. Calculate next incremented build number
+  new_build_number = (current_build.to_i + 1).to_s
+  UI.success("[build_number] 🎯 Next auto-incremented build number: #{new_build_number}")
+
+  # 4. Update Xcode project if path is provided
+  if project_path && File.exist?(project_path)
+    begin
+      increment_build_number(
+        build_number: new_build_number,
+        xcodeproj: project_path
+      )
+      UI.success("[build_number] Successfully updated #{project_path} to build #{new_build_number}")
+    rescue StandardError => e
+      UI.important("[build_number] agvtool update note: #{e.message}")
+    end
+  end
+
+  new_build_number
+end
+
 platform :ios do
   before_all do |lane, options|
     @start_time = Time.now
     UI.message("[Core CI/CD] Starting lane: [#{lane}] at #{@start_time.strftime('%H:%M:%S')}")
+  end
+
+  desc "Universal Build Number Bumper: Auto-increments build number based on TestFlight or Git"
+  lane :universal_bump_build do |options|
+    new_build = resolve_and_increment_build_number(options)
+    UI.success("[universal_bump_build] Done! New Build Number: #{new_build}")
+    new_build
   end
 
   desc "Universal Linter: Runs SwiftLint / code style enforcement"
@@ -34,7 +90,6 @@ platform :ios do
 
     UI.important("[universal_lint] Running Code Quality & Lint Checks for #{app_name}...")
 
-    # Check if swiftlint binary is installed on the runner/machine
     has_swiftlint = system("which swiftlint > /dev/null 2>&1")
 
     if has_swiftlint
@@ -97,6 +152,9 @@ platform :ios do
     configuration    = options[:configuration] || "Release"
     clean_build      = options.fetch(:clean, true)
 
+    # Auto-resolve build number if requested
+    build_num = resolve_and_increment_build_number(options) if options[:auto_increment]
+
     gym_args = {
       scheme: app_scheme,
       export_method: export_method,
@@ -113,22 +171,19 @@ platform :ios do
     send_detailed_slack(
       app_name: app_name,
       status: "Success",
+      build_number: build_num,
       duration: calculate_duration(@start_time),
       dry_run: options[:dry_run] || false
     )
   end
 
-  desc "Universal TestFlight Deploy: Match + Gym + Pilot with Automated Changelog"
+  desc "Universal TestFlight Deploy: Auto-Increment + Match + Gym + Pilot + Changelog"
   lane :universal_testflight_deploy do |options|
     app_scheme       = options[:scheme] || UI.user_error!("Please specify :scheme parameter!")
     bundle_id        = options[:bundle_id] || UI.user_error!("Please specify :bundle_id parameter!")
     app_name         = options[:app_name] || app_scheme
 
-    # Automatically generate release notes from recent git commits
-    release_notes    = fetch_changelog(options[:commit_count] || 5)
-    UI.message("[universal_testflight_deploy] Generated Changelog:\n#{release_notes}")
-
-    # App Store Connect API Key Integration
+    # 1. App Store Connect API Key Integration
     if options[:api_key_path] && options[:key_id] && options[:issuer_id]
       app_store_connect_api_key(
         key_id: options[:key_id],
@@ -139,7 +194,14 @@ platform :ios do
       )
     end
 
-    # Fastlane Match Certificate Fetch
+    # 2. Automatically determine and increment build number
+    build_num = resolve_and_increment_build_number(options)
+
+    # 3. Automatically generate release notes from recent git commits
+    release_notes = fetch_changelog(options[:commit_count] || 5)
+    UI.message("[universal_testflight_deploy] Generated Changelog:\n#{release_notes}")
+
+    # 4. Fastlane Match Certificate Fetch
     if options[:git_url] || ENV["MATCH_GIT_URL"]
       match(
         type: "appstore",
@@ -148,14 +210,14 @@ platform :ios do
       )
     end
 
-    # Archive IPA
+    # 5. Archive IPA
     build_app(
       scheme: app_scheme,
       export_method: "app-store",
       clean: true
     )
 
-    # Upload to TestFlight with auto-generated release notes!
+    # 6. Upload to TestFlight with auto-generated release notes
     upload_to_testflight(
       changelog: release_notes,
       skip_waiting_for_build_processing: true,
@@ -165,6 +227,7 @@ platform :ios do
     send_detailed_slack(
       app_name: app_name,
       status: "Success",
+      build_number: build_num,
       duration: calculate_duration(@start_time),
       changelog: release_notes,
       dry_run: options[:dry_run] || false
@@ -173,25 +236,28 @@ platform :ios do
 
   desc "Simulation / Mock Deploy: Validates pipeline flow without Apple Developer credentials"
   lane :universal_mock_deploy do |options|
-    app_scheme = options[:scheme] || "SampleApp"
-    app_name   = options[:app_name] || app_scheme
-    bundle_id  = options[:bundle_id] || "com.ci.sample"
+    app_scheme   = options[:scheme] || "SampleApp"
+    app_name     = options[:app_name] || app_scheme
+    bundle_id    = options[:bundle_id] || "com.ci.sample"
 
+    # Auto-resolve build number for simulation
+    build_num     = resolve_and_increment_build_number(options.merge(sync_with_testflight: false))
     release_notes = fetch_changelog(5)
 
     UI.important("=" * 60)
     UI.important("[MOCK DEPLOY] Simulating Core CI/CD Pipeline")
-    UI.message("1. Validating Signing Profiles for Bundle ID: #{bundle_id} [MOCK OK]")
-    UI.message("2. Archiving Scheme: #{app_scheme} [MOCK OK]")
-    UI.message("3. Uploading to TestFlight: #{bundle_id} (Skipping binary push) [MOCK OK]")
-    UI.message("4. Automated Changelog Generated:\n#{release_notes}")
+    UI.message("1. Auto-Incremented Build Number: #{build_num} [MOCK OK]")
+    UI.message("2. Validating Signing Profiles for Bundle ID: #{bundle_id} [MOCK OK]")
+    UI.message("3. Archiving Scheme: #{app_scheme} [MOCK OK]")
+    UI.message("4. Uploading to TestFlight: #{bundle_id} (Skipping binary push) [MOCK OK]")
+    UI.message("5. Automated Changelog Generated:\n#{release_notes}")
     UI.important("=" * 60)
 
     send_detailed_slack(
       app_name: app_name,
       status: "Success",
       version_number: options[:version] || "1.0.0",
-      build_number: options[:build] || "1",
+      build_number: build_num,
       duration: calculate_duration(@start_time),
       changelog: release_notes,
       dry_run: true
