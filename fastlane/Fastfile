@@ -289,6 +289,40 @@ platform :ios do
     )
   end
 
+  desc "Universal All-in-One Pipeline: PR Gate -> Lint -> Tests -> Bump -> Deploy sequentially"
+  lane :universal_pipeline do |options|
+    app_scheme = options[:scheme] || "SampleApp"
+    app_name   = options[:app_name] || app_scheme
+    is_mock    = options.fetch(:mock, true)
+
+    UI.important("🚀" * 30)
+    UI.important("🚀 [ALL-IN-ONE PIPELINE] Executing full CI/CD suite for #{app_name}")
+    UI.important("🚀" * 30)
+
+    # 1. PR Quality Gate
+    UI.message("\n[Pipeline Step 1/4] 🛡️ Evaluating PR Quality Gate...")
+    universal_pr_gate(options)
+
+    # 2. Lint & Code Quality
+    UI.message("\n[Pipeline Step 2/4] 🔍 Running Code Quality & Lint Checks...")
+    universal_lint(options)
+
+    # 3. Test Suite
+    UI.message("\n[Pipeline Step 3/4] 🧪 Running Unit & UI Tests...")
+    universal_test(options)
+
+    # 4. Packaging & Deployment
+    UI.message("\n[Pipeline Step 4/4] 📦 Packaging & Deploying...")
+    if is_mock
+      universal_mock_deploy(options)
+    else
+      universal_testflight_deploy(options)
+    end
+
+    total_time = calculate_duration(@start_time)
+    UI.success("\n🎉 [ALL-IN-ONE PIPELINE] Entire CI/CD pipeline succeeded in #{total_time}! All gates cleared.")
+  end
+
   error do |lane, exception|
     elapsed = calculate_duration(@start_time)
     UI.error("[Core CI/CD] Pipeline failed on lane: [#{lane}] after #{elapsed} with error: #{exception.message}")
