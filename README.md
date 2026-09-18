@@ -49,7 +49,7 @@ In traditional mobile engineering workflows, every new iOS repository duplicates
 | **New Project Onboarding** | 2 - 4 Hours (Copy-pasting scripts) | **2 Minutes** | **98% Time Saved** |
 | **GitHub Actions Complexity** | 80 - 120 lines of repetitive YAML | **4 Lines** (`workflow_call`) | **Zero Boilerplate** |
 | **Maintenance & Updates** | Separate PR per repository | **Single Source of Truth** (`ios-cicd-core`) | **Near-Zero Maintenance** |
-| **Version Stability** | Untracked, unversioned scripts | **SemVer Git Tagging** (`@v1.2.0`) | **Guaranteed Stability** |
+| **Version Stability** | Untracked, unversioned scripts | **SemVer Git Tagging** (`@v1.3.0`) | **Guaranteed Stability** |
 | **Release Notes (Changelog)** | Manual / often forgotten | **Automated Git Log Extraction** | **100% Automated** |
 | **Failure Feedback** | Buried inside raw runner logs | **Block Kit Slack Cards + Stacktrace** | **Instant Root Cause** |
 | **Benchmarking** | Unknown execution duration | **Sub-second Duration Metrics** | **Build Optimization Insights** |
@@ -127,6 +127,9 @@ If any step fails (`scan`, `gym`, `match`), the `error do |lane, exception|` hoo
 ### 6. 🔢 Automated Build Number Auto-Increment & TestFlight Sync
 Never manually edit `CURRENT_PROJECT_VERSION` in Xcode again. The pipeline automatically queries TestFlight for the latest remote build number, falls back deterministically to Git commit counts, increments by `+1`, and updates the Xcode project target using `agvtool`.
 
+### 7. 🤖 Configurable PR Quality Gate & Policy Engine (`universal_pr_gate`)
+Empowers engineering teams to define custom project policies in `.github/pr-rules.yml` (e.g., max PR line changes, mandatory unit tests for feature changes, PR description length, WIP blockers, and critical dependency monitoring). Automatically audits the branch and posts an update-in-place review comment directly on the GitHub Pull Request.
+
 ---
 
 ## 🔔 Slack Notification Card Preview
@@ -152,7 +155,7 @@ default_platform(:ios)
 # 1. Import the centralized core engine from Git
 import_from_git(
   url: "https://github.com/hakankorhasan/ios-cicd-core.git",
-  branch: "main" # or lock to tag: "v1.2.0" for production stability
+  branch: "main" # or lock to tag: "v1.3.0" for production stability
 )
 
 platform :ios do
@@ -185,7 +188,7 @@ on: [push]
 
 jobs:
   pipeline:
-    uses: hakankorhasan/ios-cicd-core/.github/workflows/reusable-pipeline.yml@v1.2.0
+    uses: hakankorhasan/ios-cicd-core/.github/workflows/reusable-pipeline.yml@v1.3.0
     with:
       scheme: 'FitlyApp'
       lane: 'test'
@@ -204,6 +207,7 @@ jobs:
 | `universal_build` | `scheme`, `export_method`, `output_directory`, `configuration` | Builds and archives IPA via `gym` (development, ad-hoc, enterprise, app-store). |
 | `universal_testflight_deploy` | `scheme`, `bundle_id`, `api_key_path`, `commit_count` | Fetches certs via `match`, archives IPA, auto-generates changelog, and uploads via `pilot`. |
 | `universal_lint` | `scheme`, `strict`, `dry_run` | Runs SwiftLint / Swift syntax validation to maintain codebase standards. |
+| `universal_pr_gate` | `rules_path`, `pr_title`, `fail_on_breach` | Audits PR against company policies (`.github/pr-rules.yml`) and posts/updates GitHub PR comment. |
 | `universal_bump_build` | `project`, `bundle_id`, `sync_with_testflight` | Auto-increments project build number via TestFlight query or deterministic Git commit count. |
 | `universal_mock_deploy` | `scheme`, `bundle_id`, `app_name`, `version`, `build` | End-to-end dry-run simulation without requiring live Apple Developer certificates. |
 

@@ -89,7 +89,7 @@
       <text y="15" class="comm"># Import centralized engine in 1 line</text>
       <text y="40"><tspan class="fn">import_from_git</tspan>(</text>
       <text y="62">  <tspan class="kw">url:</tspan> <tspan class="str">"hakankorhasan/ios-cicd-core"</tspan>,</text>
-      <text y="84">  <tspan class="kw">tag:</tspan> <tspan class="str">"v1.2.0"</tspan></text>
+      <text y="84">  <tspan class="kw">tag:</tspan> <tspan class="str">"v1.3.0"</tspan></text>
       <text y="106">)</text>
       <text y="135" class="comm"># Ready to deploy any app seamlessly</text>
       <text y="160"><tspan class="kw">lane</tspan> <tspan class="str">:release</tspan> <tspan class="kw">do</tspan></text>

@@ -110,7 +110,7 @@
       <circle cx="0" cy="0" r="22" fill="#1e293b" stroke="#8b5cf6" stroke-width="3" filter="url(#neonGlow)" />
       <text x="0" y="6" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#fff">⚙️</text>
       <text x="0" y="38" class="pipe-label" text-anchor="middle">Core Engine</text>
-      <text x="0" y="52" class="pipe-sub" text-anchor="middle">@v1.2.0 (SemVer)</text>
+      <text x="0" y="52" class="pipe-sub" text-anchor="middle">@v1.3.0 (SemVer)</text>
     </g>
 
     <!-- Node 3: Test & Lint -->
