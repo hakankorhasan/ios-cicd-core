@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 450" width="100%" height="450">
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <style>
+    .slack-bg { fill: #1a1d21; }
+    .channel-header { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 700; fill: #d1d2d3; }
+    .channel-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #abacad; }
+    .bot-name { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; font-weight: 900; fill: #ffffff; }
+    .bot-tag { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10px; font-weight: 700; fill: #abacad; }
+    .timestamp { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; fill: #abacad; }
+    
+    .card-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 18px; font-weight: 800; fill: #ffffff; }
+    .field-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 700; fill: #abacad; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field-val { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: 600; fill: #e8e8e8; }
+    .code-pill { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; fill: #e01e5a; }
+
+    .notes-header { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; font-weight: 800; fill: #ffffff; }
+    .note-item { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; fill: #d1d2d3; }
+    .note-author { fill: #abacad; font-size: 12px; }
+    .btn-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <!-- Slack App Window Frame -->
+  <rect width="840" height="450" rx="14" class="slack-bg" stroke="#2c3136" stroke-width="1.5" />
+
+  <!-- Channel Header Bar -->
+  <g transform="translate(0, 0)">
+    <rect width="840" height="48" rx="14" fill="#222529" />
+    <rect y="36" width="840" height="12" fill="#222529" />
+    <line x1="0" y1="48" x2="840" y2="48" stroke="#35373b" stroke-width="1" />
+    
+    <text x="24" y="29" class="channel-header"># 🚀 ios-deployments</text>
+    <text x="180" y="29" class="channel-sub">| Automated CI/CD updates for all apps</text>
+  </g>
+
+  <!-- Message Content Area -->
+  <g transform="translate(32, 70)">
+    <!-- Bot Avatar -->
+    <rect x="0" y="2" width="40" height="40" rx="8" fill="#00F376" />
+    <text x="20" y="27" font-family="sans-serif" font-size="20" text-anchor="middle" fill="#000">🚀</text>
+
+    <!-- Bot Info & Timestamp -->
+    <text x="54" y="16" class="bot-name">Fastlane CI/CD Core</text>
+    <rect x="195" y="4" width="34" height="16" rx="4" fill="#2c3136" />
+    <text x="212" y="16" class="bot-tag" text-anchor="middle">APP</text>
+    <text x="240" y="16" class="timestamp">Today at 14:16 PM</text>
+
+    <!-- Attachment Card -->
+    <g transform="translate(54, 30)" filter="url(#cardShadow)">
+      <!-- Main Card Container -->
+      <rect width="715" height="305" rx="8" fill="#222529" stroke="#35373b" stroke-width="1" />
+      
+      <!-- Green Success Bar -->
+      <rect width="4" height="305" rx="2" fill="#2eb886" />
+
+      <!-- Card Inner Content -->
+      <g transform="translate(20, 24)">
+        <!-- Title -->
+        <text x="0" y="0" class="card-title">✅ FitlyApp Pipeline Succeeded!</text>
+
+        <!-- Grid Metadata (Row 1) -->
+        <g transform="translate(0, 28)">
+          <!-- App -->
+          <text x="0" y="0" class="field-title">Application</text>
+          <text x="0" y="20" class="field-val">FitlyApp</text>
+
+          <!-- Status -->
+          <text x="175" y="0" class="field-title">Status</text>
+          <text x="175" y="20" class="field-val" fill="#2eb886">🟢 Success</text>
+
+          <!-- Version -->
+          <text x="350" y="0" class="field-title">Version</text>
+          <text x="350" y="20" class="field-val">1.0.0 (Build 42)</text>
+
+          <!-- Duration -->
+          <text x="525" y="0" class="field-title">Duration</text>
+          <text x="525" y="20" class="field-val">⏱️ 1m 24s</text>
+        </g>
+
+        <!-- Grid Metadata (Row 2) -->
+        <g transform="translate(0, 82)">
+          <!-- Branch -->
+          <text x="0" y="0" class="field-title">Branch</text>
+          <rect x="0" y="8" width="55" height="20" rx="4" fill="#1a1d21" />
+          <text x="8" y="22" class="code-pill">main</text>
+
+          <!-- Commit -->
+          <text x="175" y="0" class="field-title">Commit</text>
+          <rect x="175" y="8" width="70" height="20" rx="4" fill="#1a1d21" />
+          <text x="183" y="22" class="code-pill">e158d05</text>
+
+          <!-- Environment -->
+          <text x="350" y="0" class="field-title">Target Environment</text>
+          <text x="350" y="22" class="field-val">Apple TestFlight</text>
+
+          <!-- Trigger -->
+          <text x="525" y="0" class="field-title">Triggered By</text>
+          <text x="525" y="22" class="field-val">GitHub Push</text>
+        </g>
+
+        <!-- Divider Line -->
+        <line x1="0" y1="126" x2="675" y2="126" stroke="#35373b" stroke-width="1" />
+
+        <!-- Automated Release Notes (Changelog) -->
+        <g transform="translate(0, 150)">
+          <text x="0" y="0" class="notes-header">🚀 Release Notes (What's New):</text>
+          <text x="0" y="22" class="note-item">• Automated Changelog extraction directly from Git commits <tspan class="note-author">(Hakan Körhasan)</tspan></text>
+          <text x="0" y="42" class="note-item">• Multi-module Swift Package Manager build cache enabled <tspan class="note-author">(Hakan Körhasan)</tspan></text>
+          <text x="0" y="62" class="note-item">• SwiftLint syntax enforcement passed with 0 warnings <tspan class="note-author">(Hakan Körhasan)</tspan></text>
+        </g>
+
+        <!-- Interactive Action Buttons -->
+        <g transform="translate(0, 236)">
+          <rect width="165" height="32" rx="6" fill="#007a5a" />
+          <text x="82" y="21" class="btn-text" text-anchor="middle">Open in TestFlight ↗</text>
+
+          <rect x="178" width="150" height="32" rx="6" fill="#2c3136" stroke="#35373b" stroke-width="1" />
+          <text x="253" y="21" class="btn-text" text-anchor="middle">View GitHub Run ↗</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

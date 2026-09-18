@@ -1,7 +1,9 @@
 <div align="center">
 
-# 🚀 iOS CI/CD Core
-### **Enterprise-Grade, Modular & Plug-and-Play iOS DevOps Platform**
+<img src="assets/hero-banner.svg" alt="iOS CI/CD Core Banner" width="100%" />
+
+<br/>
+<br/>
 
 [![Release](https://img.shields.io/github/v/tag/hakankorhasan/ios-cicd-core?label=Release&color=blueviolet&style=for-the-badge)](https://github.com/hakankorhasan/ios-cicd-core/tags)
 [![Fastlane](https://img.shields.io/badge/Fastlane-2.231+-00F376?style=for-the-badge&logo=fastlane&logoColor=white)](https://fastlane.tools)
@@ -51,6 +53,12 @@ In traditional mobile engineering workflows, every new iOS repository duplicates
 | **Release Notes (Changelog)** | Manual / often forgotten | **Automated Git Log Extraction** | **100% Automated** |
 | **Failure Feedback** | Buried inside raw runner logs | **Block Kit Slack Cards + Stacktrace** | **Instant Root Cause** |
 | **Benchmarking** | Unknown execution duration | **Sub-second Duration Metrics** | **Build Optimization Insights** |
+
+<br/>
+
+<p align="center">
+  <img src="assets/before-after.svg" alt="Traditional vs Core Comparison" width="100%" />
+</p>
 
 ---
 
@@ -122,16 +130,11 @@ If any step fails (`scan`, `gym`, `match`), the `error do |lane, exception|` hoo
 
 When a pipeline completes or encounters an error, the custom action renders a rich **Slack Block Kit** card:
 
-> ### 🟢 FitlyApp Pipeline Succeeded!
-> 
-> | Application | Status | Version | Duration | Branch | Commit |
-> | :--- | :--- | :--- | :--- | :--- | :--- |
-> | **FitlyApp** | ✅ **Success** | `1.0.0 (42)` | ⏱️ `1m 24s` | `main` | `e158d05` |
-> 
-> **🚀 Release Notes (What's New):**
-> * • `feat`: Automated Changelog extraction directly from Git commits (*Hakan Körhasan*)
-> * • `perf`: Multi-module Swift Package Manager build cache enabled (*Hakan Körhasan*)
-> * • `fix`: Resolved code signing profile entitlement mismatch (*Hakan Körhasan*)
+<br/>
+
+<p align="center">
+  <img src="assets/slack-card.svg" alt="Slack Notification Card Preview" width="100%" />
+</p>
 
 ---
 
