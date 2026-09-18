@@ -15,6 +15,8 @@ module Fastlane
         build_number   = params[:build_number] || (ENV["BUILD_NUMBER"] || "Local")
         git_branch     = params[:git_branch] || Actions.git_branch || "main"
         git_commit     = params[:git_commit] || Actions.last_git_commit_dict[:commit_hash] rescue "unknown"
+        duration       = params[:duration] || "N/A"
+        changelog      = params[:changelog]
         error_message  = params[:error_message]
         webhook_url    = params[:webhook_url] || ENV["SLACK_WEBHOOK_URL"]
         dry_run        = params[:dry_run]
@@ -39,6 +41,10 @@ module Fastlane
           {
             "type" => "mrkdwn",
             "text" => "*Branch:*\n`#{git_branch}`"
+          },
+          {
+            "type" => "mrkdwn",
+            "text" => "*Duration:*\n⏱️ #{duration}"
           }
         ]
 
@@ -64,6 +70,18 @@ module Fastlane
           }
         ]
 
+        # Add Changelog section if available
+        if changelog && !changelog.to_s.strip.empty?
+          blocks << {
+            "type" => "section",
+            "text" => {
+              "type" => "mrkdwn",
+              "text" => "*🚀 Release Notes (What's New):*\n#{changelog}"
+            }
+          }
+        end
+
+        # Add Error details section if failed
         if error_message && !is_success
           blocks << {
             "type" => "section",
@@ -89,7 +107,8 @@ module Fastlane
           UI.important("[send_detailed_slack] SIMULATED SLACK NOTIFICATION (Dry-Run)")
           UI.important("Headline: #{headline}")
           UI.important("App: #{app_name} | Status: #{status} | Version: #{version_number} (#{build_number})")
-          UI.important("Branch: #{git_branch} | Commit: #{git_commit}")
+          UI.important("Branch: #{git_branch} | Commit: #{git_commit} | Duration: #{duration}")
+          UI.important("Release Notes:\n#{changelog}") if changelog
           UI.important("Error: #{error_message}") if error_message
           UI.important("Payload JSON Preview:")
           UI.message(JSON.pretty_generate(payload))
@@ -120,7 +139,7 @@ module Fastlane
       end
 
       def self.description
-        "Sends a rich formatted Slack notification with build details and error logging"
+        "Sends a rich formatted Slack notification with build duration, changelog, and error details"
       end
 
       def self.available_options
@@ -148,6 +167,14 @@ module Fastlane
                                        type: String),
           FastlaneCore::ConfigItem.new(key: :git_commit,
                                        description: "Git commit hash",
+                                       optional: true,
+                                       type: String),
+          FastlaneCore::ConfigItem.new(key: :duration,
+                                       description: "Execution duration (e.g. 1m 24s)",
+                                       optional: true,
+                                       type: String),
+          FastlaneCore::ConfigItem.new(key: :changelog,
+                                       description: "Release notes / commit changelog",
                                        optional: true,
                                        type: String),
           FastlaneCore::ConfigItem.new(key: :error_message,

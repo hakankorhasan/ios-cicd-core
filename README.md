@@ -1,72 +1,90 @@
-# 🚀 iOS CI/CD Core: Plug-and-Play Automation Ecosystem
+# 🚀 iOS CI/CD Core: Plug-and-Play Automation Platform
 
 [![Fastlane](https://img.shields.io/badge/fastlane-2.231+-00F376.svg?style=flat&logo=fastlane)](https://fastlane.tools)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Composite_Actions-2088FF.svg?style=flat&logo=github-actions)](https://github.com/features/actions)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Reusable_Workflows-2088FF.svg?style=flat&logo=github-actions)](https://github.com/features/actions)
 [![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20macOS-lightgrey.svg?style=flat&logo=apple)](https://developer.apple.com/ios/)
+[![Swift 6](https://img.shields.io/badge/Swift-6.0%20Ready-F05138.svg?logo=swift)](https://swift.org)
 [![Architecture](https://img.shields.io/badge/Architecture-Modular%20%26%20Decoupled-blueviolet.svg)](#architecture)
 
-> **Merkezi ve Modüler (Plug-and-Play) iOS CI/CD Servisi**  
-> Tüm iOS projeleriniz için kod tekrarını önleyen, tek bir satırla içe aktarılabilen ve tek merkezden güncellenen kurumsal düzeyde dağıtım ve test mimarisi.
+> **Enterprise-Grade, Zero-Friction iOS CI/CD as a Service**  
+> Tüm iOS projelerinizi (SwiftUI, UIKit, Multi-module) tek merkezden yönetin. Kod tekrarını sıfırlayın, TestFlight dağıtımlarını, otomatik Changelog üretimini ve Slack bildirimlerini **tek bir satır kodla** projelerinize dahil edin.
+
+---
+
+## ⚡ Geleneksel vs. Core Mimari (Before vs. After)
+
+| Özellik | Geleneksel Yaklaşım ❌ | `ios-cicd-core` Mimarisi ✅ |
+| :--- | :--- | :--- |
+| **Yeni Proje Kurulumu** | 2-4 saat (Fastfile & GHA kopyala-yapıştır) | **2 Dakika** (`import_from_git` + 5 satır) |
+| **Bakım Maliyeti** | 1 kural değiştiğinde 10 repo güncelleme | **Tek Noktadan** (Sadece `ios-cicd-core` güncellenir) |
+| **Sürümleme & Güvenlik** | Takipsiz ve kontrolsüz scriptler | **SemVer Git Tags** (`@v1.0.0`) ile kırılma koruması |
+| **Sürüm Notları (Changelog)** | Elle yazılan tutarsız notlar | **Otomatik Git Log Ayrıştırma** (TestFlight & Slack) |
+| **Hata Yönetimi** | Terminal loglarında kaybolan hatalar | **Block Kit Slack Kartı** (Commit, Branch, Duration, Trace) |
+| **Derleme Süresi Takibi** | Bilinmeyen gecikmeler | **Otomatik Süre Ölçümü** (`⏱️ Build Time: 1m 24s`) |
 
 ---
 
 ## 🏛️ Mimari Tasarım (Architecture)
 
-Geleneksel yapılarda her iOS projesinde onlarca satırlık `Fastfile` ve `.github/workflows` dosyaları kopyala-yapıştır yapılır. `ios-cicd-core`, **Platform Engineering / CI-CD as a Service** yaklaşımı ile tüm DevOps operasyonlarını merkezi bir beyinde toplar.
-
 ```mermaid
 flowchart TD
-    subgraph Core ["ios-cicd-core (Merkezi Beyin)"]
-        CA["Composite Actions<br/>(.github/actions/setup-ios-env)"]
-        FL["Universal Fastfile<br/>(test, build, testflight)"]
-        SA["Custom Fastlane Action<br/>(send_detailed_slack)"]
+    subgraph Core ["ios-cicd-core (Merkezi Platform)"]
+        RW["Reusable Workflows<br/>(reusable-pipeline.yml)"]
+        CA["Composite Actions<br/>(setup-ios-env)"]
+        FL["Universal Fastfile<br/>(lint, test, build, deploy)"]
+        SA["Custom Action<br/>(send_detailed_slack + metrics)"]
+        CL["Automated Changelog<br/>(Git Commits Extractor)"]
     end
 
-    subgraph Consumer1 ["Hedef Proje 1: Fitly (SwiftUI)"]
-        F1["fastlane/Fastfile<br/>(import_from_git)"]
-        W1[".github/workflows/deploy.yml"]
+    subgraph App1 ["Target App 1: Fitly (SwiftUI)"]
+        W1["deploy.yml (4 satır)"]
+        F1["Fastfile (5 satır)"]
     end
 
-    subgraph Consumer2 ["Hedef Proje 2: Goldwise (UIKit/Fintech)"]
-        F2["fastlane/Fastfile<br/>(import_from_git)"]
-        W2[".github/workflows/deploy.yml"]
+    subgraph App2 ["Target App 2: Goldwise (Fintech/UIKit)"]
+        W2["deploy.yml (4 satır)"]
+        F2["Fastfile (5 satır)"]
     end
 
-    CA -->|Ortam Kurulumu & Cache| W1
-    CA -->|Ortam Kurulumu & Cache| W2
+    RW -.->|Workflow Call| W1
+    RW -.->|Workflow Call| W2
     FL -->|Universal Lanes| F1
     FL -->|Universal Lanes| F2
-    SA -->|Zengin Slack Bildirimi| F1
-    SA -->|Zengin Slack Bildirimi| F2
+    SA -->|Zengin Slack Kartları| F1
+    SA -->|Zengin Slack Kartları| F2
+    CL -->|Otomatik Sürüm Notları| F1
+    CL -->|Otomatik Sürüm Notları| F2
 ```
 
 ---
 
-## 📦 Katmanlar
+## 💎 Öne Çıkan Yetenekler (Core Features)
 
-### 1. GitHub Composite Actions (`setup-ios-env`)
-macOS runner'lar üzerinde Ruby kurulumu, Bundler önbelleği ve Swift Package Manager (SPM) kütüphanelerinin önbelleklenmesini tek bir adımda çözer.
+### 1. 📝 Otomatik Changelog & Release Notes Üretimi
+Son Git commit geçmişini otomatik olarak analiz eder, madde işaretlerine dönüştürür ve:
+* TestFlight'ın *"What to Test"* açıklamasına otomatik basar.
+* Slack bildirim kartına *"🚀 Release Notes"* alanı olarak ekler.
 
-### 2. Evrensel Fastlane Dağıtım Motoru (`Fastfile`)
-Hiçbir projeye (bundle ID veya scheme) hardcoded bağımlılığı yoktur. Parametrelerle beslenir:
-* `universal_test`: `scan` ile birim ve UI testlerini simülatörde koşturur, kod kapsamı (coverage) raporlar.
-* `universal_build`: `gym` ile projeyi derler; development, ad-hoc veya enterprise formatında çıktılar üretir.
-* `universal_testflight_deploy`: `match` ile sertifikaları çeker, `gym` ile archive alır ve `pilot` ile TestFlight'a yükler.
-* `universal_mock_deploy`: Gerçek Apple Developer sertifikası olmadan tüm hattı test edebilmeniz için simülasyon modu.
+### 2. ⏱️ Performans ve Süre Ölçümü (Benchmarking)
+Her pipeline adımının (`universal_lint`, `universal_test`, `universal_build`) başlangıç ve bitiş zamanını milisaniye hassasiyetinde takip eder ve Slack raporuna `⏱️ 1m 35s` şeklinde iliştirir.
 
-### 3. Özel Fastlane Eklentisi (`send_detailed_slack`)
-Slack Block Kit API'sini kullanarak derleme durumu, versiyon, build numarası, branch, commit SHA ve hata mesajlarını içeren kurumsal düzeyde bildirim kartları üretir. Webhook yoksa otomatik olarak **Dry-Run** moduna geçerek konsola renkli önizleme basar.
+### 3. 🎯 GitHub Reusable Workflow (`workflow_call`)
+Hedef projelerdeki karmaşık YAML dosyalarını tarihe gömer. Tek bir çağrıyla tüm ortam kurulumunu, önbellekleri ve derleme adımlarını yürütür.
+
+### 4. 🛡️ SwiftLint & Kod Kalitesi Geçidi (`universal_lint`)
+Tüm PR'larda kod standartlarını denetler, ihlal durumunda pipeline'ı güvenle durdurur.
 
 ---
 
-## 🔌 Tüketici Projeye Entegrasyon (Sadece 5 Satır!)
+## 🔌 Tüketici Projeye Entegrasyon
 
-Herhangi bir iOS projenizin (örneğin `Fitly` veya `Goldwise`) `fastlane/Fastfile` dosyasına yalnızca şunu yazmanız yeterlidir:
+### 1. `fastlane/Fastfile` (Sadece 5 Satır!)
 
 ```ruby
+# encoding: utf-8
 default_platform(:ios)
 
-# 1. Merkezi repoyu Git üzerinden dahil et
+# Merkezi repoyu Git üzerinden dahil et
 import_from_git(
   url: "https://github.com/hakankorhasan/ios-cicd-core.git",
   branch: "main" # veya production için tag: "v1.0.0"
@@ -78,66 +96,43 @@ platform :ios do
     universal_testflight_deploy(
       scheme: "Fitly",
       bundle_id: "com.hakan.fitly",
-      app_name: "Fitly App"
+      app_name: "Fitly"
     )
   end
 
   desc "Test Koşumu"
   lane :test do
-    universal_test(
-      scheme: "Fitly",
-      device: "iPhone 16"
-    )
+    universal_test(scheme: "Fitly")
   end
 end
 ```
 
-### GitHub Actions Entegrasyonu (`.github/workflows/deploy.yml`):
+### 2. GitHub Actions (`.github/workflows/ci.yml` - Sadece 4 Satır!)
 
 ```yaml
 name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [ main ]
+on: [push]
 
 jobs:
-  deploy:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # Merkezi ortam kurulum eklentisini çağır
-      - name: Setup Core iOS Environment
-        uses: hakankorhasan/ios-cicd-core/.github/actions/setup-ios-env@main
-
-      # Fastlane lane'ini tetikle
-      - name: Deploy to TestFlight
-        run: bundle exec fastlane release
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  build:
+    uses: hakankorhasan/ios-cicd-core/.github/workflows/reusable-pipeline.yml@v1.0.0
+    with:
+      scheme: 'Fitly'
+      lane: 'test'
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
 ---
 
-## 🧪 Yerel Olarak Test Etme
+## 🧪 Yerel Simülasyon ve Test
 
-Core repoyu kendi makinenizde test etmek için:
+Apple Developer ücretli sertifikası gerekmeden tüm sistemi yerel ortamda test etmek için:
 
 ```bash
-# 1. Custom Action'ı test et (Dry-Run ile)
-fastlane run send_detailed_slack app_name:"Fitly" status:"Success" version_number:"1.2.0" build_number:"42" dry_run:true
+# 1. SwiftLint & Kod Kalite Kontrolü
+fastlane universal_lint scheme:"Fitly"
 
-# 2. Mock Deploy akışını çalıştır
+# 2. Otomatik Changelog & Süre Takibi ile Mock Dağıtım
 fastlane universal_mock_deploy app_name:"Fitly" scheme:"FitlyApp" bundle_id:"com.hakan.fitly"
 ```
-
----
-
-## 🌟 Neden Bu Mimari? (Key Highlights)
-
-1. **Single Source of Truth (Tek Doğru Kaynağı):** Dağıtım kuralları değiştiğinde 10 ayrı uygulamanın reposunu güncellemek yerine yalnızca `ios-cicd-core` güncellenir.
-2. **Zero-Friction Onboarding:** Yeni bir iOS projesi dakikalar içinde CI/CD'ye hazır hale gelir.
-3. **Separation of Concerns:** iOS uygulama geliştiricileri sadece ürün koduna odaklanır; DevOps karmaşası soyutlanır.

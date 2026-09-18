@@ -1,0 +1,61 @@
+name: 'Universal iOS Reusable Pipeline'
+
+on:
+  workflow_call:
+    inputs:
+      scheme:
+        description: 'The Xcode scheme to build or test'
+        required: true
+        type: string
+      bundle_id:
+        description: 'Application Bundle Identifier'
+        required: false
+        type: string
+        default: ''
+      lane:
+        description: 'Fastlane lane to run (e.g. test, deploy_mock, release, lint)'
+        required: false
+        type: string
+        default: 'test'
+      device:
+        description: 'Simulator device name for running tests'
+        required: false
+        type: string
+        default: 'iPhone 16'
+      runs-on:
+        description: 'Runner environment (e.g. macos-14, macos-latest)'
+        required: false
+        type: string
+        default: 'macos-14'
+    secrets:
+      SLACK_WEBHOOK_URL:
+        description: 'Slack incoming webhook URL for notifications'
+        required: false
+      MATCH_PASSWORD:
+        description: 'Fastlane Match encryption password'
+        required: false
+      APP_STORE_KEY:
+        description: 'Base64 encoded App Store Connect API Key'
+        required: false
+
+jobs:
+  core-ios-job:
+    name: 'Core Pipeline: ${{ inputs.scheme }} [${{ inputs.lane }}]'
+    runs-on: ${{ inputs.runs-on }}
+    steps:
+      - name: Checkout Repository with Git History
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history required for automated changelog generation
+
+      - name: Setup Core iOS Environment (Ruby, Bundler, SPM Cache)
+        uses: hakankorhasan/ios-cicd-core/.github/actions/setup-ios-env@main
+
+      - name: Execute Core Fastlane Lane
+        run: bundle exec fastlane ${{ inputs.lane }}
+        env:
+          SCHEME: ${{ inputs.scheme }}
+          BUNDLE_ID: ${{ inputs.bundle_id }}
+          TEST_DEVICE: ${{ inputs.device }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
