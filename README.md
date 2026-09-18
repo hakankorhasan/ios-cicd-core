@@ -228,7 +228,8 @@ ios-cicd-core/
 **Hakan Körhasan**  
 *Senior iOS Developer & Mobile Architect*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Hakan_Körhasan-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hakankorhasan/)
+[![Website](https://img.shields.io/badge/Website-hakankorhasan.com-4E5EE4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://hakankorhasan.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Hakan_Körhasan-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hakan-korhasan-032721231/)
 [![GitHub](https://img.shields.io/badge/GitHub-hakankorhasan-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hakankorhasan)
 
 ---
