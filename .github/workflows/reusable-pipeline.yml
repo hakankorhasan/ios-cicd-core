@@ -13,7 +13,7 @@ on:
         type: string
         default: ''
       lane:
-        description: 'Fastlane lane to run (e.g. test, deploy_mock, release, lint)'
+        description: 'Fastlane lane to run (e.g. test, deploy_mock, release, lint, pr_gate)'
         required: false
         type: string
         default: 'test'
@@ -46,7 +46,7 @@ jobs:
       - name: Checkout Repository with Git History
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Full history required for automated changelog generation
+          fetch-depth: 0 # Full history required for automated changelog generation and git diffs
 
       - name: Setup Core iOS Environment (Ruby, Bundler, SPM Cache)
         uses: hakankorhasan/ios-cicd-core/.github/actions/setup-ios-env@main
@@ -57,5 +57,10 @@ jobs:
           SCHEME: ${{ inputs.scheme }}
           BUNDLE_ID: ${{ inputs.bundle_id }}
           TEST_DEVICE: ${{ inputs.device }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN || github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_PR_TITLE: ${{ github.event.pull_request.title }}
+          GITHUB_PR_BODY: ${{ github.event.pull_request.body }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

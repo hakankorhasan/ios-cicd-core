@@ -82,6 +82,31 @@ platform :ios do
     new_build
   end
 
+  desc "Universal PR Quality Gate: Evaluates company rules (.github/pr-rules.yml) and posts PR review comments"
+  lane :universal_pr_gate do |options|
+    app_scheme   = options[:scheme] || "iOS App"
+    app_name     = options[:app_name] || app_scheme
+    fail_on_fail = options.fetch(:fail_on_breach, false)
+
+    UI.important("[universal_pr_gate] 🤖 Running PR Quality Gate & Policy Audit for #{app_name}...")
+
+    gate_result = post_pr_quality_gate(
+      rules_path: options[:rules_path] || ".github/pr-rules.yml",
+      pr_title: options[:pr_title],
+      pr_body: options[:pr_body],
+      pr_number: options[:pr_number],
+      dry_run: options.fetch(:dry_run, false)
+    )
+
+    if fail_on_fail && !gate_result[:passed]
+      UI.user_error!("🛑 [PR Quality Gate] Pull Request violated one or more company quality policies. Please resolve before merging.")
+    else
+      UI.success("[universal_pr_gate] Quality Gate audit completed successfully! ✨")
+    end
+
+    gate_result
+  end
+
   desc "Universal Linter: Runs SwiftLint / code style enforcement"
   lane :universal_lint do |options|
     app_scheme   = options[:scheme] || "iOS App"

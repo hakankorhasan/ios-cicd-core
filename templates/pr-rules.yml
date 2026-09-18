@@ -1,0 +1,33 @@
+# ==============================================================================
+# iOS CI/CD Core: PR Quality Gate & Policy Configuration
+# Place this file in your target application at: .github/pr-rules.yml
+# ==============================================================================
+
+quality_gate:
+  # 1. Pull Request Size Check
+  # Large PRs degrade review quality and increase defect escape rates.
+  max_lines_changed: 500
+  fail_on_large_pr: false     # If true, blocks the pipeline; if false, raises a warning.
+
+  # 2. Automated Test Enforcement
+  # Requires test files to be touched whenever feature/source code is modified.
+  require_tests_for_features: true
+
+  # 3. Pull Request Description Validation
+  # Enforces context and documentation for reviewer clarity.
+  require_description: true
+  min_description_length: 25
+
+  # 4. Work In Progress (WIP) Blocker
+  # Prevents accidental merges of incomplete drafts (matches WIP, [WIP], Draft, etc.)
+  block_wip_titles: true
+
+  # 5. Monitored Critical Files
+  # Alerts the team whenever sensitive configuration or dependencies are touched.
+  critical_files:
+    - 'Package.swift'
+    - 'Package.resolved'
+    - 'Podfile'
+    - 'Podfile.lock'
+    - '*.pbxproj'
+    - '*.entitlements'
