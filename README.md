@@ -13,48 +13,48 @@
 <br/>
 
 <p align="center">
-  <b>Tüm iOS projeleriniz için tek merkezden yönetilen, tek satır kodla dahil edilen ve sıfır kod tekrarı sunan yeni nesil CI/CD ekosistemi.</b>
+  <b>A centralized, zero-boilerplate, plug-and-play CI/CD ecosystem designed for iOS engineering teams.</b>
   <br />
-  <sub>Fitly gibi generative AI destekli modern SwiftUI projelerinden, Goldwise gibi gerçek zamanlı WebSockets kullanan UIKit tabanlı fintech uygulamalarına kadar tüm ekosistemde tam uyumlu.</sub>
+  <sub>From modern generative AI-driven SwiftUI applications to real-time WebSocket fintech platforms, manage test automation, code signing, and TestFlight deployment with a single line of code.</sub>
 </p>
 
-[Mimarisi](#-mimari-tasarım-architecture) •
-[Before vs. After](#-geleneksel-vs-core-mimari) •
-[Özellikler](#-öne-çıkan-yetenekler) •
-[Hızlı Başlangıç](#-tüketici-projeye-entegrasyon-sadece-5-satır) •
-[Slack Önizleme](#-slack-bildirim-kartı-önizlemesi) •
-[Lane Referansı](#-evrensel-lane-referans-tablosu)
+[Architecture](#-architecture) •
+[Before vs. After](#-traditional-vs-core-architecture) •
+[Key Features](#-key-features) •
+[Quickstart](#-quickstart-integration-just-5-lines) •
+[Slack Preview](#-slack-notification-card-preview) •
+[Lane Reference](#-universal-lane-reference-table)
 
 ---
 
 </div>
 
-## 💡 Neden `ios-cicd-core`?
+## 💡 Why `ios-cicd-core`?
 
-Geleneksel mobil geliştirme süreçlerinde her yeni repo için onlarca satırlık `Fastfile` ve karmaşık `.github/workflows` YAML dosyaları kopyala-yapıştır yapılır. 
-* Bir sertifika kuralı değiştiğinde **10 farklı repoyu tek tek gezmek** zorunda kalırsınız.
-* Yeni bir projeye CI/CD kurmak saatler hatta günler sürer.
-* Sürüm notları elle yazıldığı için tutarsızdır.
+In traditional mobile engineering workflows, every new iOS repository duplicates dozens of lines of `Fastfile` scripts and bloated `.github/workflows` YAML files.
+* When code signing rules or provisioning profiles rotate, **you are forced to manually update 10+ separate repositories**.
+* Setting up CI/CD for a new application takes hours or days.
+* Manually compiled release notes are inconsistent and prone to human error.
 
-**`ios-cicd-core`**, **Platform Engineering / CI-CD as a Service** felsefesiyle bu teknik borcu ortadan kaldırır. Dağıtım motorunu bağımsız bir kütüphane haline getirir; hedef uygulamalar sadece birkaç satırla bu altyapıyı "import" eder.
+**`ios-cicd-core`** adopts a **Platform Engineering / CI-CD as a Service** philosophy. It encapsulates the entire delivery engine into a decoupled, versioned repository. Target apps simply "import" the core engine—eliminating technical debt and code duplication across your entire portfolio.
 
 ---
 
-## ⚡ Geleneksel vs. Core Mimari
+## ⚡ Traditional vs. Core Architecture
 
-| Metrik & Yetenek | Geleneksel Yaklaşım ❌ | `ios-cicd-core` Mimarisi ✅ | Kazanım 🚀 |
+| Metric & Capability | Traditional Approach ❌ | `ios-cicd-core` Platform ✅ | Impact 🚀 |
 | :--- | :--- | :--- | :--- |
-| **Yeni Proje Onboarding** | 2 - 4 Saat | **2 Dakika** | **%98 Zaman Tasarrufu** |
-| **GitHub Actions Kod Yükü** | 80 - 120 satır YAML | **4 Satır** (`workflow_call`) | **Temiz & Standart CI** |
-| **Bakım & Güncelleme** | Her repo için ayrı PR | **Tek Merkezden** (`ios-cicd-core`) | **Sıfır Bakım Maliyeti** |
-| **Sürümleme Güvenliği** | Kontrolsüz scriptler | **SemVer Git Tagging** (`@v1.1.0`) | **Sıfır Kırılma Riski** |
-| **Sürüm Notları (Changelog)** | Manuel / Unutulan notlar | **Otomatik Git Log Ayrıştırma** | **%100 Otomatize** |
-| **Hata Bildirimi** | Ham konsol logları | **Block Kit Slack Kartı + Trace** | **Hızlı Kök Neden Tespiti** |
-| **Performans Ölçümü** | Bilinmiyor | **Milisaniye Hassasiyetinde Süre** | **Build Benchmark Takibi** |
+| **New Project Onboarding** | 2 - 4 Hours (Copy-pasting scripts) | **2 Minutes** | **98% Time Saved** |
+| **GitHub Actions Complexity** | 80 - 120 lines of repetitive YAML | **4 Lines** (`workflow_call`) | **Zero Boilerplate** |
+| **Maintenance & Updates** | Separate PR per repository | **Single Source of Truth** (`ios-cicd-core`) | **Near-Zero Maintenance** |
+| **Version Stability** | Untracked, unversioned scripts | **SemVer Git Tagging** (`@v1.1.0`) | **Guaranteed Stability** |
+| **Release Notes (Changelog)** | Manual / often forgotten | **Automated Git Log Extraction** | **100% Automated** |
+| **Failure Feedback** | Buried inside raw runner logs | **Block Kit Slack Cards + Stacktrace** | **Instant Root Cause** |
+| **Benchmarking** | Unknown execution duration | **Sub-second Duration Metrics** | **Build Optimization Insights** |
 
 ---
 
-## 🏛️ Mimari Tasarım (Architecture)
+## 🏛️ Architecture
 
 ```mermaid
 flowchart TD
@@ -62,7 +62,7 @@ flowchart TD
     classDef appStyle fill:#181825,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
     classDef actionStyle fill:#313244,stroke:#a6e3a1,stroke-width:1.5px,color:#cdd6f4;
 
-    subgraph Core ["🏢 ios-cicd-core (Merkezi DevOps Platformu)"]
+    subgraph Core ["🏢 ios-cicd-core (Central DevOps Platform)"]
         RW["🎯 Reusable Workflow<br/>(reusable-pipeline.yml)"]:::actionStyle
         CA["📦 Composite Action<br/>(setup-ios-env)"]:::actionStyle
         FL["⚙️ Universal Fastfile<br/>(lint, test, build, deploy)"]:::actionStyle
@@ -71,15 +71,15 @@ flowchart TD
     end
     class Core coreStyle;
 
-    subgraph App1 ["📱 Hedef Uygulama 1: Fitly (SwiftUI)"]
-        W1["deploy.yml (4 satır)"]:::actionStyle
-        F1["Fastfile (5 satır)"]:::actionStyle
+    subgraph App1 ["📱 Target App 1: Fitly (SwiftUI)"]
+        W1["deploy.yml (4 lines)"]:::actionStyle
+        F1["Fastfile (5 lines)"]:::actionStyle
     end
     class App1 appStyle;
 
-    subgraph App2 ["📱 Hedef Uygulama 2: Goldwise (Fintech / UIKit)"]
-        W2["deploy.yml (4 satır)"]:::actionStyle
-        F2["Fastfile (5 satır)"]:::actionStyle
+    subgraph App2 ["📱 Target App 2: Goldwise (Fintech / UIKit)"]
+        W2["deploy.yml (4 lines)"]:::actionStyle
+        F2["Fastfile (5 lines)"]:::actionStyle
     end
     class App2 appStyle;
 
@@ -89,38 +89,38 @@ flowchart TD
     CA -->|macOS + Ruby + SPM Cache| W2
     FL ===>|Universal Lanes| F1
     FL ===>|Universal Lanes| F2
-    SA -.->|Zengin Slack Kartı| F1
-    SA -.->|Zengin Slack Kartı| F2
-    CL -.->|Otomatik What to Test| F1
-    CL -.->|Otomatik What to Test| F2
+    SA -.->|Rich Slack Card| F1
+    SA -.->|Rich Slack Card| F2
+    CL -.->|Automated What to Test| F1
+    CL -.->|Automated What to Test| F2
 ```
 
 ---
 
-## 💎 Öne Çıkan Yetenekler
+## 💎 Key Features
 
-### 1. 📝 Otomatik Changelog & Sürüm Notu Üretimi
-Son Git commit geçmişini otomatik olarak analiz eder, yazar ve mesaj bilgilerini madde işaretlerine dönüştürür:
-* **TestFlight:** *"What to Test"* açıklamasına anında enjekte edilir.
-* **Slack:** Ekibe giden bildirim kartının altına *"🚀 Release Notes"* alanı olarak eklenir.
+### 1. 📝 Automated Changelog & Release Notes Extraction
+Automatically inspects the latest Git commit log, parses commit messages and author metadata, and generates clean markdown bullet points:
+* **TestFlight:** Dynamically populates the *"What to Test"* field during upload.
+* **Slack:** Appends a formatted *"🚀 Release Notes"* block to team notifications.
 
 ### 2. 🎯 GitHub Reusable Workflow (`workflow_call`)
-Hedef projelerdeki karmaşık CI/CD scriptlerini tamamen ortadan kaldırır. Tek bir çağrıyla önbellekleri, Ruby/Bundler ortamını ve Fastlane iş akışlarını ayağa kaldırır.
+Eliminates hundreds of lines of repetitive CI workflow scripts. A single reusable workflow invocation handles runner provisioning, caching, dependency resolution, and Fastlane lane execution.
 
-### 3. ⏱️ Performans ve Süre Ölçümü (Benchmarking)
-Her derleme adımının süresini milisaniye hassasiyetinde ölçer ve Slack raporuna `⏱️ Duration: 1m 24s` olarak yansıtır.
+### 3. ⏱️ Duration Metrics & Benchmarking
+Tracks the exact execution duration of each pipeline stage (`universal_lint`, `universal_test`, `universal_build`) and embeds timing metrics directly into Slack reports (`⏱️ Duration: 1m 24s`).
 
-### 4. 🛡️ SwiftLint & Kod Kalite Kapısı (`universal_lint`)
-Tüm pull request'lerde kod standartlarını otomatik denetler; derleme hatası veya stil ihlali olan PR'ların ana dala girmesini engeller.
+### 4. 🛡️ SwiftLint & Code Quality Gate (`universal_lint`)
+Enforces code style and best practices across all pull requests, blocking builds with lint errors or broken syntax before merging.
 
-### 5. 🔀 Hata Yakalama (Lifecycle Hook)
-Pipeline herhangi bir adımda (`scan`, `gym`, `match`) patlarsa, `error do |lane, exception|` bloğu otomatik devreye girerek hatanın detayını, ilgili branch ve commit bilgisiyle kırmızı Slack kartı olarak yayınlar.
+### 5. 🔀 Lifecycle Error Trapping & Reporting
+If any step fails (`scan`, `gym`, `match`), the `error do |lane, exception|` hook captures the exception and immediately posts an actionable red alert to Slack with the branch, commit SHA, and exact error message.
 
 ---
 
-## 🔔 Slack Bildirim Kartı Önizlemesi
+## 🔔 Slack Notification Card Preview
 
-Build tamamlandığında veya hata aldığında Slack kanalınıza düşen **Block Kit** kartının canlı simülasyonu:
+When a pipeline completes or encounters an error, the custom action renders a rich **Slack Block Kit** card:
 
 > ### 🟢 FitlyApp Pipeline Succeeded!
 > 
@@ -135,22 +135,22 @@ Build tamamlandığında veya hata aldığında Slack kanalınıza düşen **Blo
 
 ---
 
-## 🔌 Tüketici Projeye Entegrasyon (Sadece 5 Satır!)
+## 🔌 Quickstart Integration (Just 5 Lines!)
 
-### 1. Hedef Projedeki `fastlane/Fastfile`:
+### 1. Consumer App `fastlane/Fastfile`:
 
 ```ruby
 # encoding: utf-8
 default_platform(:ios)
 
-# 1. Merkezi repoyu Git üzerinden dahil et
+# 1. Import the centralized core engine from Git
 import_from_git(
   url: "https://github.com/hakankorhasan/ios-cicd-core.git",
-  branch: "main" # veya production güvenliği için tag: "v1.1.0"
+  branch: "main" # or lock to tag: "v1.1.0" for production stability
 )
 
 platform :ios do
-  desc "TestFlight Dağıtımı"
+  desc "Release to TestFlight"
   lane :release do
     universal_testflight_deploy(
       scheme: "FitlyApp",
@@ -159,19 +159,19 @@ platform :ios do
     )
   end
 
-  desc "Birim Testleri Koştur"
+  desc "Run Unit & UI Tests"
   lane :test do
     universal_test(scheme: "FitlyApp", device: "iPhone 17 Pro")
   end
 
-  desc "Kod Kalite & Lint Kontrolü"
+  desc "Code Quality & Lint Check"
   lane :lint do
     universal_lint(scheme: "FitlyApp")
   end
 end
 ```
 
-### 2. Hedef Projedeki GitHub Actions (`.github/workflows/deploy.yml`):
+### 2. Consumer App GitHub Actions (`.github/workflows/deploy.yml`):
 
 ```yaml
 name: CI/CD Pipeline
@@ -190,19 +190,19 @@ jobs:
 
 ---
 
-## 📖 Evrensel Lane Referans Tablosu
+## 📖 Universal Lane Reference Table
 
-| Lane Adı | Parametreler | Açıklama |
+| Lane | Key Parameters | Description |
 | :--- | :--- | :--- |
-| `universal_test` | `scheme`, `device`, `clean`, `code_coverage`, `output_directory` | `scan` ile birim ve UI testlerini simülatörde koşturur, coverage raporu üretir. |
-| `universal_build` | `scheme`, `export_method`, `output_directory`, `configuration` | `gym` ile projeyi derler; development, ad-hoc, enterprise veya app-store çıktısı alır. |
-| `universal_testflight_deploy` | `scheme`, `bundle_id`, `api_key_path`, `commit_count` | `match` ile sertifikaları çeker, derler, otomatik changelog üretir ve TestFlight'a yükler. |
-| `universal_lint` | `scheme`, `strict`, `dry_run` | SwiftLint ve Swift sözdizimi doğrulaması yapar, PR kalitesini güvenceye alır. |
-| `universal_mock_deploy` | `scheme`, `bundle_id`, `app_name`, `version`, `build` | Apple hesabı gerektirmeden pipeline akışını, changelog üretimini ve bildirimleri simüle eder. |
+| `universal_test` | `scheme`, `device`, `clean`, `code_coverage`, `output_directory` | Runs Unit & UI tests on simulator via `scan`, generates code coverage reports. |
+| `universal_build` | `scheme`, `export_method`, `output_directory`, `configuration` | Builds and archives IPA via `gym` (development, ad-hoc, enterprise, app-store). |
+| `universal_testflight_deploy` | `scheme`, `bundle_id`, `api_key_path`, `commit_count` | Fetches certs via `match`, archives IPA, auto-generates changelog, and uploads via `pilot`. |
+| `universal_lint` | `scheme`, `strict`, `dry_run` | Runs SwiftLint / Swift syntax validation to maintain codebase standards. |
+| `universal_mock_deploy` | `scheme`, `bundle_id`, `app_name`, `version`, `build` | End-to-end dry-run simulation without requiring live Apple Developer certificates. |
 
 ---
 
-## 📁 Repository Klasör Hiyerarşisi
+## 📁 Repository Structure
 
 ```text
 ios-cicd-core/
@@ -211,19 +211,19 @@ ios-cicd-core/
 │   │   └── setup-ios-env/
 │   │       └── action.yml           # 📦 Composite Action (macOS, Ruby, Bundler, SPM Cache)
 │   └── workflows/
-│       └── reusable-pipeline.yml    # 🎯 Reusable Workflow (workflow_call ana pipeline)
+│       └── reusable-pipeline.yml    # 🎯 Reusable Workflow (workflow_call parent pipeline)
 ├── fastlane/
-│   ├── Fastfile                     # ⚙️ Evrensel Dağıtım ve Test Motoru
+│   ├── Fastfile                     # ⚙️ Universal Delivery & Testing Engine
 │   └── actions/
-│       └── send_detailed_slack.rb   # 🔔 Slack Block Kit Özel Eklentisi (Metrics + Changelog)
-├── Gemfile                          # 💎 Sürüm kilitli Fastlane bağımlılığı
-├── .gitignore                       # 🧹 iOS & Fastlane temizlik kuralları
-└── README.md                        # 📖 Mimari Dokümantasyon & Entegrasyon Rehberi
+│       └── send_detailed_slack.rb   # 🔔 Slack Block Kit Custom Action (Metrics + Changelog)
+├── Gemfile                          # 💎 Version-pinned Fastlane dependency
+├── .gitignore                       # 🧹 iOS & Fastlane hygiene rules
+└── README.md                        # 📖 Architecture Specification & Integration Guide
 ```
 
 ---
 
-## 👨‍💻 Yazar & İletişim
+## 👨‍💻 Author & Connect
 
 **Hakan Körhasan**  
 *Senior iOS Developer & Mobile Architect*
@@ -234,5 +234,5 @@ ios-cicd-core/
 ---
 
 <div align="center">
-  <sub>Crafted with ❤️ for scalable, modern iOS engineering teams.</sub>
+  <sub>Crafted with ❤️ for modern, scalable iOS engineering teams worldwide.</sub>
 </div>
