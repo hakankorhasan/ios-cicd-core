@@ -49,7 +49,7 @@ In traditional mobile engineering workflows, every new iOS repository duplicates
 | **New Project Onboarding** | 2 - 4 Hours (Copy-pasting scripts) | **2 Minutes** | **98% Time Saved** |
 | **GitHub Actions Complexity** | 80 - 120 lines of repetitive YAML | **4 Lines** (`workflow_call`) | **Zero Boilerplate** |
 | **Maintenance & Updates** | Separate PR per repository | **Single Source of Truth** (`ios-cicd-core`) | **Near-Zero Maintenance** |
-| **Version Stability** | Untracked, unversioned scripts | **SemVer Git Tagging** (`@v1.1.0`) | **Guaranteed Stability** |
+| **Version Stability** | Untracked, unversioned scripts | **SemVer Git Tagging** (`@v1.2.0`) | **Guaranteed Stability** |
 | **Release Notes (Changelog)** | Manual / often forgotten | **Automated Git Log Extraction** | **100% Automated** |
 | **Failure Feedback** | Buried inside raw runner logs | **Block Kit Slack Cards + Stacktrace** | **Instant Root Cause** |
 | **Benchmarking** | Unknown execution duration | **Sub-second Duration Metrics** | **Build Optimization Insights** |
@@ -152,7 +152,7 @@ default_platform(:ios)
 # 1. Import the centralized core engine from Git
 import_from_git(
   url: "https://github.com/hakankorhasan/ios-cicd-core.git",
-  branch: "main" # or lock to tag: "v1.1.0" for production stability
+  branch: "main" # or lock to tag: "v1.2.0" for production stability
 )
 
 platform :ios do
@@ -185,7 +185,7 @@ on: [push]
 
 jobs:
   pipeline:
-    uses: hakankorhasan/ios-cicd-core/.github/workflows/reusable-pipeline.yml@v1.1.0
+    uses: hakankorhasan/ios-cicd-core/.github/workflows/reusable-pipeline.yml@v1.2.0
     with:
       scheme: 'FitlyApp'
       lane: 'test'
