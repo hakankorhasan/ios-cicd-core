@@ -124,6 +124,9 @@ Enforces code style and best practices across all pull requests, blocking builds
 ### 5. 🔀 Lifecycle Error Trapping & Reporting
 If any step fails (`scan`, `gym`, `match`), the `error do |lane, exception|` hook captures the exception and immediately posts an actionable red alert to Slack with the branch, commit SHA, and exact error message.
 
+### 6. 🔢 Automated Build Number Auto-Increment & TestFlight Sync
+Never manually edit `CURRENT_PROJECT_VERSION` in Xcode again. The pipeline automatically queries TestFlight for the latest remote build number, falls back deterministically to Git commit counts, increments by `+1`, and updates the Xcode project target using `agvtool`.
+
 ---
 
 ## 🔔 Slack Notification Card Preview
@@ -201,6 +204,7 @@ jobs:
 | `universal_build` | `scheme`, `export_method`, `output_directory`, `configuration` | Builds and archives IPA via `gym` (development, ad-hoc, enterprise, app-store). |
 | `universal_testflight_deploy` | `scheme`, `bundle_id`, `api_key_path`, `commit_count` | Fetches certs via `match`, archives IPA, auto-generates changelog, and uploads via `pilot`. |
 | `universal_lint` | `scheme`, `strict`, `dry_run` | Runs SwiftLint / Swift syntax validation to maintain codebase standards. |
+| `universal_bump_build` | `project`, `bundle_id`, `sync_with_testflight` | Auto-increments project build number via TestFlight query or deterministic Git commit count. |
 | `universal_mock_deploy` | `scheme`, `bundle_id`, `app_name`, `version`, `build` | End-to-end dry-run simulation without requiring live Apple Developer certificates. |
 
 ---
