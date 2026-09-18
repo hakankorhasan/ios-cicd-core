@@ -1,0 +1,34 @@
+name: 'Setup Core iOS Environment'
+description: 'Standardizes macOS runner environment: Ruby, Bundler caching, SPM caching, and Fastlane setup.'
+
+inputs:
+  ruby-version:
+    description: 'Ruby version to install'
+    required: false
+    default: '3.2'
+  cache-spm:
+    description: 'Whether to cache Swift Package Manager dependencies'
+    required: false
+    default: 'true'
+  spm-cache-path:
+    description: 'Path for SPM cache'
+    required: false
+    default: '.build'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cache Swift Package Manager
+      if: inputs.cache-spm == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.spm-cache-path }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved', '**/project.pbxproj') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Setup Ruby and Bundler
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true

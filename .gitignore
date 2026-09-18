@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Ruby & Bundler
+vendor/bundle/
+.bundle/
+Gemfile.lock
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/README.md
+
+# Build Artifacts
+*.ipa
+*.app.dSYM.zip
+*.dSYM.zip
+*.mobileprovision
+*.cer
+*.p8
+*.p12
+
+# DerivedData
+DerivedData/
+build/
+.build/
