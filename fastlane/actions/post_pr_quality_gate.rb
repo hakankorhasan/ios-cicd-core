@@ -148,15 +148,21 @@ module Fastlane
         end
       end
 
+      def self.git_repo?
+        system("git rev-parse --is-inside-work-tree >/dev/null 2>&1")
+      end
+
       def self.get_changed_files
-        raw = Actions.sh("git diff --name-only HEAD~1 2>/dev/null || git diff --name-only origin/main...HEAD 2>/dev/null || git ls-files -m").strip
+        return [] unless git_repo?
+        raw = Actions.sh("git diff --name-only HEAD~1 2>/dev/null || git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only 2>/dev/null || git ls-files -m 2>/dev/null").strip
         raw.split("\n").map(&:strip).reject(&:empty?)
       rescue StandardError
         []
       end
 
       def self.get_line_stats
-        raw = Actions.sh("git diff --numstat HEAD~1 2>/dev/null || git diff --numstat origin/main...HEAD 2>/dev/null || git diff --numstat").strip
+        return { additions: 0, deletions: 0 } unless git_repo?
+        raw = Actions.sh("git diff --numstat HEAD~1 2>/dev/null || git diff --numstat origin/main...HEAD 2>/dev/null || git diff --numstat 2>/dev/null").strip
         additions = 0
         deletions = 0
         raw.each_line do |line|
