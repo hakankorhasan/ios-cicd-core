@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'net/http'
 require 'uri'
 require 'json'
@@ -17,7 +19,7 @@ module Fastlane
         webhook_url    = params[:webhook_url] || ENV["SLACK_WEBHOOK_URL"]
         dry_run        = params[:dry_run]
 
-        status_emoji = is_success ? "✅" : "🚨"
+        status_emoji = is_success ? "[OK]" : "[FAIL]"
         status_color = is_success ? "#36a64f" : "#dc3545"
         headline     = is_success ? "#{app_name} Pipeline Succeeded!" : "#{app_name} Pipeline Failed!"
 
@@ -84,7 +86,7 @@ module Fastlane
         # Dry run or missing webhook handling
         if dry_run || webhook_url.to_s.strip.empty?
           UI.important("=" * 60)
-          UI.important("🚀 [send_detailed_slack] SIMULATED SLACK NOTIFICATION (Dry-Run)")
+          UI.important("[send_detailed_slack] SIMULATED SLACK NOTIFICATION (Dry-Run)")
           UI.important("Headline: #{headline}")
           UI.important("App: #{app_name} | Status: #{status} | Version: #{version_number} (#{build_number})")
           UI.important("Branch: #{git_branch} | Commit: #{git_commit}")

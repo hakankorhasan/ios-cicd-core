@@ -1,13 +1,15 @@
+# encoding: utf-8
+
 default_platform(:ios)
 
 platform :ios do
   before_all do |lane, options|
-    UI.message("🚀 Starting Core CI/CD Pipeline lane: [#{lane}]")
+    UI.message("[Core CI/CD] Starting lane: [#{lane}]")
   end
 
-  desc "Evrensel Test Koşucusu: Unit & UI testlerini scan ile çalıştırır"
+  desc "Universal Test Runner: Executes Unit & UI tests via scan"
   lane :universal_test do |options|
-    app_scheme       = options[:scheme] || UI.user_error!("Lütfen :scheme parametresini belirtin!")
+    app_scheme       = options[:scheme] || UI.user_error!("Please specify :scheme parameter!")
     app_name         = options[:app_name] || app_scheme
     test_device      = options[:device] || "iPhone 16"
     clean_build      = options.fetch(:clean, true)
@@ -25,7 +27,7 @@ platform :ios do
     scan_args[:workspace] = options[:workspace] if options[:workspace]
     scan_args[:project]   = options[:project] if options[:project]
 
-    UI.important("🧪 Running tests for #{app_scheme} on #{test_device}...")
+    UI.important("[universal_test] Running tests for #{app_scheme} on #{test_device}...")
     scan(scan_args)
 
     send_detailed_slack(
@@ -35,9 +37,9 @@ platform :ios do
     )
   end
 
-  desc "Evrensel Derleme: Gym ile IPA veya app çıktısı üretir"
+  desc "Universal Build Runner: Builds IPA or app output via gym"
   lane :universal_build do |options|
-    app_scheme       = options[:scheme] || UI.user_error!("Lütfen :scheme parametresini belirtin!")
+    app_scheme       = options[:scheme] || UI.user_error!("Please specify :scheme parameter!")
     app_name         = options[:app_name] || app_scheme
     export_method    = options[:export_method] || "development"
     output_dir       = options[:output_directory] || "./build"
@@ -54,7 +56,7 @@ platform :ios do
     gym_args[:workspace] = options[:workspace] if options[:workspace]
     gym_args[:project]   = options[:project] if options[:project]
 
-    UI.important("🔨 Building #{app_scheme} with export method #{export_method}...")
+    UI.important("[universal_build] Building #{app_scheme} with export method #{export_method}...")
     build_app(gym_args)
 
     send_detailed_slack(
@@ -64,13 +66,13 @@ platform :ios do
     )
   end
 
-  desc "Evrensel TestFlight Dağıtımı: Match + Gym + Pilot"
+  desc "Universal TestFlight Deploy: Match + Gym + Pilot"
   lane :universal_testflight_deploy do |options|
-    app_scheme       = options[:scheme] || UI.user_error!("Lütfen :scheme parametresini belirtin!")
-    bundle_id        = options[:bundle_id] || UI.user_error!("Lütfen :bundle_id parametresini belirtin!")
+    app_scheme       = options[:scheme] || UI.user_error!("Please specify :scheme parameter!")
+    bundle_id        = options[:bundle_id] || UI.user_error!("Please specify :bundle_id parameter!")
     app_name         = options[:app_name] || app_scheme
 
-    # App Store Connect API Key Entegrasyonu (Opsiyonel)
+    # App Store Connect API Key Integration
     if options[:api_key_path] && options[:key_id] && options[:issuer_id]
       app_store_connect_api_key(
         key_id: options[:key_id],
@@ -81,7 +83,7 @@ platform :ios do
       )
     end
 
-    # Fastlane Match ile Sertifikaları Çek
+    # Fastlane Match Certificate Fetch
     if options[:git_url] || ENV["MATCH_GIT_URL"]
       match(
         type: "appstore",
@@ -90,14 +92,14 @@ platform :ios do
       )
     end
 
-    # IPA Derleme
+    # Archive IPA
     build_app(
       scheme: app_scheme,
       export_method: "app-store",
       clean: true
     )
 
-    # TestFlight Yükleme
+    # Upload to TestFlight
     upload_to_testflight(
       skip_waiting_for_build_processing: true,
       skip_submission: true
@@ -110,14 +112,14 @@ platform :ios do
     )
   end
 
-  desc "Simülasyon / Mock Dağıtım: Gerçek Apple Developer hesabı olmadan altyapıyı doğrular"
+  desc "Simulation / Mock Deploy: Validates pipeline flow without Apple Developer credentials"
   lane :universal_mock_deploy do |options|
     app_scheme = options[:scheme] || "SampleApp"
     app_name   = options[:app_name] || app_scheme
     bundle_id  = options[:bundle_id] || "com.ci.sample"
 
     UI.important("=" * 60)
-    UI.important("🚀 [MOCK DEPLOY] Simulating Core CI/CD Pipeline")
+    UI.important("[MOCK DEPLOY] Simulating Core CI/CD Pipeline")
     UI.message("1. Validating Signing Profiles for Bundle ID: #{bundle_id} [MOCK OK]")
     UI.message("2. Archiving Scheme: #{app_scheme} [MOCK OK]")
     UI.message("3. Uploading to TestFlight: #{bundle_id} (Skipping binary push) [MOCK OK]")
@@ -133,7 +135,7 @@ platform :ios do
   end
 
   error do |lane, exception|
-    UI.error("❌ Pipeline failed on lane: [#{lane}] with error: #{exception.message}")
+    UI.error("[Core CI/CD] Pipeline failed on lane: [#{lane}] with error: #{exception.message}")
     send_detailed_slack(
       app_name: "iOS CI/CD Core",
       status: "Failed",
