@@ -1,103 +1,86 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="100%" height="420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="100%" height="430">
   <defs>
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
     </filter>
   </defs>
 
-  <style>
-    .win-title { font-family: -apple-system, BlinkMacSystemFont, 'SF Mono', Menlo, monospace; font-size: 12px; font-weight: 600; fill: #94a3b8; }
-    .badge-bad { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; font-weight: 700; fill: #f87171; }
-    .badge-good { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; font-weight: 700; fill: #34d399; }
-    
-    .code { font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace; font-size: 11.5px; line-height: 1.5; }
-    .kw { fill: #c084fc; font-weight: 600; }
-    .str { fill: #38bdf8; }
-    .fn { fill: #facc15; }
-    .comm { fill: #64748b; font-style: italic; }
-    .txt { fill: #e2e8f0; }
-    .num { fill: #fb923c; }
-    .del { fill: #f43f5e; opacity: 0.8; }
-    .add { fill: #10b981; }
-  </style>
-
   <!-- Canvas Background -->
-  <rect width="1000" height="420" rx="16" fill="#0b0f19" stroke="#1e293b" stroke-width="1.5" />
+  <rect width="1000" height="430" rx="16" fill="#070a13" />
 
-  <!-- LEFT CARD: TRADITIONAL APPROACH -->
+  <!-- LEFT CARD: 120+ Lines Repetitive -->
   <g transform="translate(30, 25)" filter="url(#shadow)">
-    <!-- Window Container -->
-    <rect width="455" height="370" rx="10" fill="#111827" stroke="#374151" stroke-width="1" />
+    <rect width="455" height="380" rx="12" fill="#0f172a" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.6" />
     
     <!-- Title Bar -->
-    <rect width="455" height="36" rx="10" fill="#1f2937" />
-    <rect y="26" width="455" height="10" fill="#1f2937" />
-    <line x1="0" y1="36" x2="455" y2="36" stroke="#374151" stroke-width="1" />
-
-    <!-- Traffic Lights -->
-    <circle cx="18" cy="18" r="5.5" fill="#ef4444" />
-    <circle cx="36" cy="18" r="5.5" fill="#f59e0b" />
-    <circle cx="54" cy="18" r="5.5" fill="#10b981" />
-    <text x="74" y="22" class="win-title">deploy.yml &amp; Fastfile (Repetitive)</text>
-
+    <path d="M 0,12 A 12,12 0 0,1 12,0 L 443,0 A 12,12 0 0,1 455,12 L 455,38 L 0,38 Z" fill="#1e293b" />
+    <line x1="0" y1="38" x2="455" y2="38" stroke="#334155" stroke-width="1" />
+    
+    <!-- Mac Window Dots -->
+    <circle cx="20" cy="19" r="6" fill="#ef4444" />
+    <circle cx="38" cy="19" r="6" fill="#f59e0b" />
+    <circle cx="56" cy="19" r="6" fill="#10b981" />
+    <text x="76" y="24" font-family="-apple-system, SF Mono, Menlo, monospace" font-size="12" font-weight="600" fill="#94a3b8">deploy.yml &amp; Fastfile (Repetitive)</text>
+    
     <!-- Badge -->
-    <rect x="305" y="8" width="135" height="20" rx="4" fill="#450a0a" stroke="#7f1d1d" />
-    <text x="372" y="22" class="badge-bad" text-anchor="middle">❌ 120+ Lines / Repo</text>
+    <rect x="300" y="8" width="142" height="22" rx="5" fill="#450a0a" stroke="#b91c1c" stroke-width="1" />
+    <text x="371" y="23" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#fca5a5" text-anchor="middle">❌ 120+ Lines / Repo</text>
 
-    <!-- Code Snippet -->
-    <g transform="translate(18, 56)" class="code">
-      <text y="15" class="comm"># 1. Duplicated in every app repo...</text>
-      <text y="35" class="kw">jobs:</text>
-      <text y="55" class="txt">  <tspan class="kw">build:</tspan></text>
-      <text y="75" class="txt">    <tspan class="kw">runs-on:</tspan> macos-latest</text>
-      <text y="95" class="txt">    <tspan class="kw">steps:</tspan></text>
-      <text y="115" class="del">    - uses: actions/cache@v3 (manual SPM config)</text>
-      <text y="135" class="del">    - uses: ruby/setup-ruby@v1 (ruby 3.2)</text>
-      <text y="155" class="del">    - run: gem install bundler &amp;&amp; bundle install</text>
-      <text y="175" class="comm"># 2. Hardcoded Fastlane signing &amp; archive</text>
-      <text y="195" class="del">    - run: bundle exec fastlane deploy_app</text>
-      <text y="215" class="del">      # match(type: "appstore", app_id: "com...")</text>
-      <text y="235" class="del">      # gym(scheme: "App", export_method: "app-store")</text>
-      <text y="255" class="del">      # pilot(skip_waiting_for_build: true)</text>
-      <text y="275" class="del">      # curl -X POST https://slack... (raw json payload)</text>
-      <text y="295" class="comm"># ⚠️ Changing 1 rule breaks 10 repos!</text>
+    <!-- Code -->
+    <g transform="translate(20, 60)" font-family="SF Mono, Menlo, Monaco, Consolas, monospace" font-size="12.5" font-weight="600">
+      <text x="0" y="16" fill="#64748b" font-style="italic"># 1. Duplicated in every app repo...</text>
+      <text x="0" y="38" fill="#c084fc" font-weight="700">jobs:</text>
+      <text x="15" y="58" fill="#c084fc" font-weight="700">build:</text>
+      <text x="30" y="78" fill="#f8fafc"><tspan fill="#c084fc">runs-on:</tspan> macos-latest</text>
+      <text x="30" y="98" fill="#c084fc" font-weight="700">steps:</text>
+      <text x="30" y="118" fill="#f87171">- uses: actions/cache@v3 (manual SPM config)</text>
+      <text x="30" y="138" fill="#f87171">- uses: ruby/setup-ruby@v1 (ruby 3.2)</text>
+      <text x="30" y="158" fill="#f87171">- run: gem install bundler &amp;&amp; bundle install</text>
+      <text x="0" y="182" fill="#64748b" font-style="italic"># 2. Hardcoded Fastlane signing &amp; archive</text>
+      <text x="30" y="202" fill="#f87171">- run: bundle exec fastlane deploy_app</text>
+      <text x="45" y="222" fill="#ef4444" fill-opacity="0.85"># match(type: "appstore", app_id: "com...")</text>
+      <text x="45" y="242" fill="#ef4444" fill-opacity="0.85"># gym(scheme: "App", export_method: "app-store")</text>
+      <text x="45" y="262" fill="#ef4444" fill-opacity="0.85"># pilot(skip_waiting_for_build: true)</text>
+      <text x="45" y="282" fill="#ef4444" fill-opacity="0.85"># curl -X POST https://slack... (raw json payload)</text>
+      <text x="0" y="306" fill="#fbbf24" font-weight="700">⚠️ Changing 1 rule breaks 10 repos!</text>
     </g>
   </g>
 
-  <!-- RIGHT CARD: CORE PLUG-AND-PLAY -->
+  <!-- RIGHT CARD: 5 Lines Plug & Play (SUPER VIBRANT & HIGH CONTRAST) -->
   <g transform="translate(515, 25)" filter="url(#shadow)">
-    <!-- Window Container -->
-    <rect width="455" height="370" rx="10" fill="#0f172a" stroke="#0284c7" stroke-width="1.5" />
+    <rect width="455" height="380" rx="12" fill="#091122" stroke="#10b981" stroke-width="2" />
     
     <!-- Title Bar -->
-    <rect width="455" height="36" rx="10" fill="#1e293b" />
-    <rect y="26" width="455" height="10" fill="#1e293b" />
-    <line x1="0" y1="36" x2="455" y2="36" stroke="#334155" stroke-width="1" />
-
-    <!-- Traffic Lights -->
-    <circle cx="18" cy="18" r="5.5" fill="#ef4444" />
-    <circle cx="36" cy="18" r="5.5" fill="#f59e0b" />
-    <circle cx="54" cy="18" r="5.5" fill="#10b981" />
-    <text x="74" y="22" class="win-title">fastlane/Fastfile (Target App)</text>
-
+    <path d="M 0,12 A 12,12 0 0,1 12,0 L 443,0 A 12,12 0 0,1 455,12 L 455,38 L 0,38 Z" fill="#132038" />
+    <line x1="0" y1="38" x2="455" y2="38" stroke="#1e293b" stroke-width="1" />
+    
+    <!-- Mac Window Dots -->
+    <circle cx="20" cy="19" r="6" fill="#ef4444" />
+    <circle cx="38" cy="19" r="6" fill="#f59e0b" />
+    <circle cx="56" cy="19" r="6" fill="#10b981" />
+    <text x="76" y="24" font-family="-apple-system, SF Mono, Menlo, monospace" font-size="12" font-weight="600" fill="#94a3b8">fastlane/Fastfile (Target App)</text>
+    
     <!-- Badge -->
-    <rect x="315" y="8" width="125" height="20" rx="4" fill="#064e3b" stroke="#059669" />
-    <text x="377" y="22" class="badge-good" text-anchor="middle">✅ 5 Lines / 100% DRY</text>
+    <rect x="305" y="8" width="137" height="22" rx="5" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+    <text x="373" y="23" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">✅ 5 Lines / 100% DRY</text>
 
-    <!-- Code Snippet -->
-    <g transform="translate(18, 56)" class="code">
-      <text y="15" class="comm"># Import centralized engine in 1 line</text>
-      <text y="40"><tspan class="fn">import_from_git</tspan>(</text>
-      <text y="62">  <tspan class="kw">url:</tspan> <tspan class="str">"hakankorhasan/ios-cicd-core"</tspan>,</text>
-      <text y="84">  <tspan class="kw">tag:</tspan> <tspan class="str">"v1.3.0"</tspan></text>
-      <text y="106">)</text>
-      <text y="135" class="comm"># Ready to deploy any app seamlessly</text>
-      <text y="160"><tspan class="kw">lane</tspan> <tspan class="str">:release</tspan> <tspan class="kw">do</tspan></text>
-      <text y="185">  <tspan class="fn">universal_testflight_deploy</tspan>(</text>
-      <text y="210">    <tspan class="kw">scheme:</tspan> <tspan class="str">"FitlyApp"</tspan>,</text>
-      <text y="235">    <tspan class="kw">bundle_id:</tspan> <tspan class="str">"com.hakan.fitly"</tspan></text>
-      <text y="260">  )</text>
-      <text y="285"><tspan class="kw">end</tspan></text>
+    <!-- Code (DIRECT FILLS ON TEXT ELEMENTS FOR 100% CLARITY) -->
+    <g transform="translate(20, 60)" font-family="SF Mono, Menlo, Monaco, Consolas, monospace" font-size="13" font-weight="600">
+      <text x="0" y="16" fill="#38bdf8" font-style="italic"># 🚀 Centralized engine import (1 line)</text>
+      
+      <text x="0" y="44" fill="#facc15" font-weight="700">import_from_git(</text>
+      <text x="20" y="68" fill="#38bdf8">url: "hakankorhasan/ios-cicd-core",</text>
+      <text x="20" y="92" fill="#38bdf8">tag: "v1.3.0"</text>
+      <text x="0" y="116" fill="#f8fafc">)</text>
+
+      <text x="0" y="150" fill="#38bdf8" font-style="italic"># 📦 One-touch enterprise release</text>
+      
+      <text x="0" y="176" fill="#c084fc" font-weight="700">lane :release do</text>
+      <text x="20" y="202" fill="#facc15" font-weight="700">universal_testflight_deploy(</text>
+      <text x="40" y="228" fill="#38bdf8">scheme: "FitlyApp",</text>
+      <text x="40" y="254" fill="#38bdf8">bundle_id: "com.hakan.fitly"</text>
+      <text x="20" y="280" fill="#f8fafc">)</text>
+      <text x="0" y="306" fill="#c084fc" font-weight="700">end</text>
     </g>
   </g>
 </svg>
